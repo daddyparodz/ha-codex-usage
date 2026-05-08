@@ -15,13 +15,18 @@ A custom Home Assistant integration (via HACS) that exposes your Codex usage as 
 Supported setup modes:
 
 1. **Sign in with ChatGPT (recommended)**
-- During setup, choose `Sign in with ChatGPT`.
-- Home Assistant shows a clickable URL and an OTP code.
-- Complete login in your browser and confirm in Home Assistant.
+- In the first step, keep `Authentication method = device_code`.
+- Home Assistant shows:
+  - a browser login URL
+  - an OTP code
+  - a required checkbox (`Browser login completed`)
+- Open the URL, sign in, then return to Home Assistant.
+- Tick the checkbox and press submit.
 - Tokens are saved in the config entry and refreshed automatically.
 
 2. **Paste access token manually**
-- Use this only if you explicitly want manual token setup.
+- In the first step, select `Authentication method = access_token`.
+- Paste token (optional account ID if needed) and submit.
 
 ## Installation (HACS)
 
