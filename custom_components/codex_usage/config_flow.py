@@ -164,9 +164,7 @@ class CodexUsageConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 ): selector.TextSelector(),
             }
         )
-        return self.async_show_form(
-            step_id="access_token", data_schema=schema, errors=errors
-        )
+        return self.async_show_form(step_id="access_token", data_schema=schema, errors=errors)
 
 
 class CodexUsageOptionsFlow(config_entries.OptionsFlow):

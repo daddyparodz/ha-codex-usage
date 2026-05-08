@@ -206,9 +206,7 @@ class CodexUsageCoordinator(DataUpdateCoordinator[dict]):
                         raw = await retry.json()
                 elif resp.status >= 400:
                     body = await resp.text()
-                    raise UpdateFailed(
-                        f"Codex usage request failed: HTTP {resp.status} {body}"
-                    )
+                    raise UpdateFailed(f"Codex usage request failed: HTTP {resp.status} {body}")
                 else:
                     raw = await resp.json()
         except ClientError as err:
@@ -225,9 +223,7 @@ class CodexUsageCoordinator(DataUpdateCoordinator[dict]):
             "plan": raw.get("plan_type") or raw.get("planType"),
             "primary_used_percent": p_used,
             "primary_remaining_percent": max(0.0, 100.0 - p_used),
-            "primary_reset_time": _format_reset_time(
-                primary.get("reset_at"), include_date=False
-            ),
+            "primary_reset_time": _format_reset_time(primary.get("reset_at"), include_date=False),
             "secondary_used_percent": s_used,
             "secondary_remaining_percent": max(0.0, 100.0 - s_used),
             "secondary_reset_time": _format_reset_time(

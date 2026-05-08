@@ -1,9 +1,23 @@
+---
 name: CI
 
 on:
   pull_request:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
+  qa_actions:
+    name: qa_actions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Changed Files
+        uses: tj-actions/changed-files@v47.0.6
+      - name: typos-action
+        uses: crate-ci/typos@v1.46.1
+
   lint:
     name: lint
     runs-on: ubuntu-latest
