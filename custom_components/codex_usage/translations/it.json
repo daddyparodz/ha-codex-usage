@@ -1,0 +1,43 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Codex Usage",
+        "description": "Choose authentication and polling settings.",
+        "data": {
+          "auth_method": "Authentication method",
+          "codex_home": "Codex home path",
+          "access_token": "Access token (used only for access-token mode)",
+          "account_id": "ChatGPT account ID (optional)",
+          "backend_url": "Backend usage URL",
+          "refresh_url": "Refresh token URL",
+          "scan_interval": "Update interval (seconds)"
+        }
+      },
+      "device_code": {
+        "title": "Sign in with ChatGPT",
+        "description": "1. Open: {verification_url}\n2. Enter code: {user_code}\n3. Complete login in your browser\n4. Return here and confirm.",
+        "data": {
+          "confirm_done": "I completed login in the browser"
+        }
+      }
+    },
+    "error": {
+      "access_token_required": "Access token is required for this auth method.",
+      "device_code_init_failed": "Failed to start device-code login.",
+      "device_code_not_completed": "Complete the browser login first.",
+      "device_code_pending": "Authorization is still pending. Try again in a few seconds.",
+      "device_code_poll_failed": "Failed while checking authorization status.",
+      "token_exchange_failed": "Authorization completed, but token exchange failed."
+    }
+  },
+  "selector": {
+    "auth_method": {
+      "options": {
+        "device_code": "Sign in with ChatGPT (recommended)",
+        "auth_json": "Use existing auth.json",
+        "access_token": "Paste access token manually"
+      }
+    }
+  }
+}
