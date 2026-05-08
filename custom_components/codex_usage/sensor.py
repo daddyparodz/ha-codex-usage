@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass
 
 from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
 from homeassistant.config_entries import ConfigEntry
@@ -17,70 +16,82 @@ from .coordinator import CodexUsageCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
-
-@dataclass(frozen=True)
-class CodexSensorDescription(SensorEntityDescription):
-    object_id: str
-
-
 SENSORS = [
-    CodexSensorDescription(
-        key="primary_used_percent",
-        name="Codex 5h Used",
-        object_id="codex_5h_used",
-        native_unit_of_measurement=PERCENTAGE,
-        icon="mdi:timer-sand",
+    (
+        SensorEntityDescription(
+            key="primary_used_percent",
+            name="Codex 5h Used",
+            native_unit_of_measurement=PERCENTAGE,
+            icon="mdi:timer-sand",
+        ),
+        "codex_5h_used",
     ),
-    CodexSensorDescription(
-        key="primary_remaining_percent",
-        name="Codex 5h Remaining",
-        object_id="codex_5h_remaining",
-        native_unit_of_measurement=PERCENTAGE,
-        icon="mdi:timer-outline",
+    (
+        SensorEntityDescription(
+            key="primary_remaining_percent",
+            name="Codex 5h Remaining",
+            native_unit_of_measurement=PERCENTAGE,
+            icon="mdi:timer-outline",
+        ),
+        "codex_5h_remaining",
     ),
-    CodexSensorDescription(
-        key="primary_reset_time",
-        name="Codex 5h Reset",
-        object_id="codex_5h_reset",
-        icon="mdi:clock-outline",
+    (
+        SensorEntityDescription(
+            key="primary_reset_time",
+            name="Codex 5h Reset",
+            icon="mdi:clock-outline",
+        ),
+        "codex_5h_reset",
     ),
-    CodexSensorDescription(
-        key="secondary_used_percent",
-        name="Codex Weekly Used",
-        object_id="codex_weekly_used",
-        native_unit_of_measurement=PERCENTAGE,
-        icon="mdi:calendar-week",
+    (
+        SensorEntityDescription(
+            key="secondary_used_percent",
+            name="Codex Weekly Used",
+            native_unit_of_measurement=PERCENTAGE,
+            icon="mdi:calendar-week",
+        ),
+        "codex_weekly_used",
     ),
-    CodexSensorDescription(
-        key="secondary_remaining_percent",
-        name="Codex Weekly Remaining",
-        object_id="codex_weekly_remaining",
-        native_unit_of_measurement=PERCENTAGE,
-        icon="mdi:calendar-check",
+    (
+        SensorEntityDescription(
+            key="secondary_remaining_percent",
+            name="Codex Weekly Remaining",
+            native_unit_of_measurement=PERCENTAGE,
+            icon="mdi:calendar-check",
+        ),
+        "codex_weekly_remaining",
     ),
-    CodexSensorDescription(
-        key="secondary_reset_time",
-        name="Codex Weekly Reset",
-        object_id="codex_weekly_reset",
-        icon="mdi:calendar-clock",
+    (
+        SensorEntityDescription(
+            key="secondary_reset_time",
+            name="Codex Weekly Reset",
+            icon="mdi:calendar-clock",
+        ),
+        "codex_weekly_reset",
     ),
-    CodexSensorDescription(
-        key="credits_balance",
-        name="Codex Credits",
-        object_id="codex_credits",
-        icon="mdi:cash",
+    (
+        SensorEntityDescription(
+            key="credits_balance",
+            name="Codex Credits",
+            icon="mdi:cash",
+        ),
+        "codex_credits",
     ),
-    CodexSensorDescription(
-        key="plan",
-        name="Codex Plan",
-        object_id="codex_plan",
-        icon="mdi:account-badge",
+    (
+        SensorEntityDescription(
+            key="plan",
+            name="Codex Plan",
+            icon="mdi:account-badge",
+        ),
+        "codex_plan",
     ),
-    CodexSensorDescription(
-        key="rate_limit_reached_type",
-        name="Codex Limit Status",
-        object_id="codex_limit_status",
-        icon="mdi:alert-circle",
+    (
+        SensorEntityDescription(
+            key="rate_limit_reached_type",
+            name="Codex Limit Status",
+            icon="mdi:alert-circle",
+        ),
+        "codex_limit_status",
     ),
 ]
 
@@ -95,7 +106,9 @@ async def async_setup_entry(
     coordinator: CodexUsageCoordinator = getattr(entry, "runtime_data", None) or hass.data[
         DOMAIN
     ][entry.entry_id]
-    entities = [CodexUsageSensor(coordinator, entry, desc) for desc in SENSORS]
+    entities = [
+        CodexUsageSensor(coordinator, entry, desc, object_id) for desc, object_id in SENSORS
+    ]
     _LOGGER.debug("Adding %s codex_usage sensor entities", len(entities))
     async_add_entities(entities)
 
@@ -110,14 +123,15 @@ class CodexUsageSensor(CoordinatorEntity[CodexUsageCoordinator], SensorEntity):
         self,
         coordinator: CodexUsageCoordinator,
         entry: ConfigEntry,
-        desc: CodexSensorDescription,
+        desc: SensorEntityDescription,
+        object_id: str,
     ) -> None:
         super().__init__(coordinator)
         self.entity_description = desc
         self._entry_id = entry.entry_id
-        self._attr_unique_id = desc.object_id
+        self._attr_unique_id = object_id
         self._attr_name = desc.name
-        self._attr_suggested_object_id = desc.object_id
+        self._attr_suggested_object_id = object_id
 
     @property
     def device_info(self) -> DeviceInfo:
