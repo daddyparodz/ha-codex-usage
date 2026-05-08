@@ -14,7 +14,7 @@
         "description": "1. Open: {verification_url}\n2. Enter OTP code: {user_code}\n3. Complete login in your browser\n4. Return here and confirm.",
         "data": {
           "otp_code": "OTP Code",
-          "confirm_done": "I completed login in the browser"
+          "confirm_done": "Browser login completed"
         }
       },
       "access_token": {
@@ -51,6 +51,11 @@
       "options": {
         "device_code": "Sign in with ChatGPT (recommended)",
         "access_token": "Paste access token manually"
+      }
+    },
+    "confirm_done": {
+      "options": {
+        "yes": "Yes, completed"
       }
     }
   }

@@ -75,7 +75,7 @@ class CodexUsageConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
 
         if user_input is not None:
-            if not user_input.get("confirm_done"):
+            if user_input.get("confirm_done") != "yes":
                 errors["base"] = "device_code_not_completed"
             else:
                 try:
@@ -117,7 +117,12 @@ class CodexUsageConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Optional(
                     "otp_code", default=self._device_state.get("user_code_compact", "")
                 ): selector.TextSelector(),
-                vol.Required("confirm_done", default=False): bool,
+                vol.Required("confirm_done"): selector.SelectSelector(
+                    selector.SelectSelectorConfig(
+                        options=["yes"],
+                        mode=selector.SelectSelectorMode.DROPDOWN,
+                    )
+                ),
             }
         )
 
