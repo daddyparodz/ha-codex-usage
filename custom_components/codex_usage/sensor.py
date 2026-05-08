@@ -8,6 +8,7 @@ from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import PERCENTAGE
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
@@ -53,10 +54,20 @@ class CodexUsageSensor(CoordinatorEntity[CodexUsageCoordinator], SensorEntity):
     def __init__(self, coordinator: CodexUsageCoordinator, entry: ConfigEntry, desc: CodexSensorDescription) -> None:
         super().__init__(coordinator)
         self.entity_description = desc
+        self._entry_id = entry.entry_id
         self._attr_unique_id = f"{entry.entry_id}_{desc.key}"
         self._attr_name = desc.name
         self._attr_icon = desc.icon
         self._attr_native_unit_of_measurement = desc.unit
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        return DeviceInfo(
+            identifiers={(DOMAIN, self._entry_id)},
+            name="Codex Usage",
+            manufacturer="OpenAI",
+            model="Codex Usage Integration",
+        )
 
     @property
     def native_value(self):

@@ -5,21 +5,17 @@
         "title": "Codex Usage",
         "description": "Choose authentication method.",
         "data": {
-          "auth_method": "Authentication method"
+          "auth_method": "Authentication method",
+          "scan_interval": "Update interval (seconds)"
         }
       },
       "device_code": {
         "title": "Sign in with ChatGPT",
         "description": "1. Open: {verification_url}\n2. Enter code: {user_code}\n3. Complete login in your browser\n4. Return here and confirm.",
         "data": {
+          "verification_url_copy": "Verification URL (copy)",
+          "user_code_copy": "One-time code (copy)",
           "confirm_done": "I completed login in the browser"
-        }
-      },
-      "auth_json": {
-        "title": "Use auth.json",
-        "description": "Use existing Codex credentials from auth.json.",
-        "data": {
-          "codex_home": "Codex home path"
         }
       },
       "access_token": {
@@ -28,15 +24,6 @@
         "data": {
           "access_token": "Access token",
           "account_id": "ChatGPT account ID (optional)"
-        }
-      },
-      "advanced": {
-        "title": "Advanced settings",
-        "description": "Optional advanced settings.",
-        "data": {
-          "backend_url": "Backend usage URL",
-          "refresh_url": "Refresh token URL",
-          "scan_interval": "Update interval (seconds)"
         }
       }
     },
@@ -49,11 +36,21 @@
       "token_exchange_failed": "Authorization completed, but token exchange failed."
     }
   },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Codex Usage options",
+        "description": "Adjust polling behavior.",
+        "data": {
+          "scan_interval": "Update interval (seconds)"
+        }
+      }
+    }
+  },
   "selector": {
     "auth_method": {
       "options": {
         "device_code": "Sign in with ChatGPT (recommended)",
-        "auth_json": "Use existing auth.json",
         "access_token": "Paste access token manually"
       }
     }

@@ -20,7 +20,6 @@ from .const import (
     CLIENT_ID,
     CONF_ACCESS_TOKEN,
     CONF_ACCOUNT_ID,
-    CONF_AUTH_METHOD,
     CONF_BACKEND_URL,
     CONF_CODEX_HOME,
     CONF_ID_TOKEN,
@@ -74,13 +73,18 @@ class CodexUsageCoordinator(DataUpdateCoordinator[dict]):
         self.entry = entry
         self._cfg = entry.data
 
+        scan_interval = int(
+            entry.options.get(
+                CONF_SCAN_INTERVAL,
+                self._cfg.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
+            )
+        )
+
         super().__init__(
             hass,
             logger=_LOGGER,
             name=DOMAIN,
-            update_interval=timedelta(
-                seconds=int(self._cfg.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL))
-            ),
+            update_interval=timedelta(seconds=scan_interval),
         )
 
     async def _async_read_auth_json(self, codex_home: str) -> tuple[Path, dict]:
@@ -188,18 +192,26 @@ class CodexUsageCoordinator(DataUpdateCoordinator[dict]):
             "Authorization": f"Bearer {token}",
             "User-Agent": "codex-usage-ha-integration",
         }
-        if account_id:
-            headers["ChatGPT-Account-Id"] = account_id
 
         session = aiohttp_client.async_get_clientsession(self.hass)
         try:
             async with session.get(backend_url, headers=headers, timeout=30) as resp:
-                if resp.status >= 400:
+                if resp.status == 401 and account_id:
+                    headers["ChatGPT-Account-Id"] = account_id
+                    async with session.get(backend_url, headers=headers, timeout=30) as retry:
+                        if retry.status >= 400:
+                            body = await retry.text()
+                            raise UpdateFailed(
+                                f"Codex usage request failed: HTTP {retry.status} {body}"
+                            )
+                        raw = await retry.json()
+                elif resp.status >= 400:
                     body = await resp.text()
                     raise UpdateFailed(
                         f"Codex usage request failed: HTTP {resp.status} {body}"
                     )
-                raw = await resp.json()
+                else:
+                    raw = await resp.json()
         except ClientError as err:
             raise UpdateFailed(f"Network error: {err}") from err
 
