@@ -1,7 +1,9 @@
 """Constants for Codex Usage integration."""
 
+from homeassistant.const import Platform
+
 DOMAIN = "codex_usage"
-PLATFORMS = ["sensor"]
+PLATFORMS = [Platform.SENSOR]
 
 CLIENT_ID = "app_EMoamEEZ73f0CkXaXp7hrann"
 AUTH_ISSUER = "https://auth.openai.com"
