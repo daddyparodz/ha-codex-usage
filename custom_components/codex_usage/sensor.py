@@ -26,15 +26,69 @@ class CodexSensorDescription:
 
 
 SENSORS = [
-    CodexSensorDescription("primary_used_percent", "Codex 5h Used", "codex_5h_used", PERCENTAGE, "mdi:timer-sand"),
-    CodexSensorDescription("primary_remaining_percent", "Codex 5h Remaining", "codex_5h_remaining", PERCENTAGE, "mdi:timer-outline"),
-    CodexSensorDescription("primary_reset_time", "Codex 5h Reset", "codex_5h_reset", None, "mdi:clock-outline"),
-    CodexSensorDescription("secondary_used_percent", "Codex Weekly Used", "codex_weekly_used", PERCENTAGE, "mdi:calendar-week"),
-    CodexSensorDescription("secondary_remaining_percent", "Codex Weekly Remaining", "codex_weekly_remaining", PERCENTAGE, "mdi:calendar-check"),
-    CodexSensorDescription("secondary_reset_time", "Codex Weekly Reset", "codex_weekly_reset", None, "mdi:calendar-clock"),
-    CodexSensorDescription("credits_balance", "Codex Credits", "codex_credits", None, "mdi:cash"),
-    CodexSensorDescription("plan", "Codex Plan", "codex_plan", None, "mdi:account-badge"),
-    CodexSensorDescription("rate_limit_reached_type", "Codex Limit Status", "codex_limit_status", None, "mdi:alert-circle"),
+    CodexSensorDescription(
+        "primary_used_percent",
+        "Codex 5h Used",
+        "codex_5h_used",
+        PERCENTAGE,
+        "mdi:timer-sand",
+    ),
+    CodexSensorDescription(
+        "primary_remaining_percent",
+        "Codex 5h Remaining",
+        "codex_5h_remaining",
+        PERCENTAGE,
+        "mdi:timer-outline",
+    ),
+    CodexSensorDescription(
+        "primary_reset_time",
+        "Codex 5h Reset",
+        "codex_5h_reset",
+        None,
+        "mdi:clock-outline",
+    ),
+    CodexSensorDescription(
+        "secondary_used_percent",
+        "Codex Weekly Used",
+        "codex_weekly_used",
+        PERCENTAGE,
+        "mdi:calendar-week",
+    ),
+    CodexSensorDescription(
+        "secondary_remaining_percent",
+        "Codex Weekly Remaining",
+        "codex_weekly_remaining",
+        PERCENTAGE,
+        "mdi:calendar-check",
+    ),
+    CodexSensorDescription(
+        "secondary_reset_time",
+        "Codex Weekly Reset",
+        "codex_weekly_reset",
+        None,
+        "mdi:calendar-clock",
+    ),
+    CodexSensorDescription(
+        "credits_balance",
+        "Codex Credits",
+        "codex_credits",
+        None,
+        "mdi:cash",
+    ),
+    CodexSensorDescription(
+        "plan",
+        "Codex Plan",
+        "codex_plan",
+        None,
+        "mdi:account-badge",
+    ),
+    CodexSensorDescription(
+        "rate_limit_reached_type",
+        "Codex Limit Status",
+        "codex_limit_status",
+        None,
+        "mdi:alert-circle",
+    ),
 ]
 
 
@@ -53,7 +107,12 @@ class CodexUsageSensor(CoordinatorEntity[CodexUsageCoordinator], SensorEntity):
     _attr_has_entity_name = False
     _attr_entity_registry_enabled_default = True
 
-    def __init__(self, coordinator: CodexUsageCoordinator, entry: ConfigEntry, desc: CodexSensorDescription) -> None:
+    def __init__(
+        self,
+        coordinator: CodexUsageCoordinator,
+        entry: ConfigEntry,
+        desc: CodexSensorDescription,
+    ) -> None:
         super().__init__(coordinator)
         self.entity_description = desc
         self._entry_id = entry.entry_id
