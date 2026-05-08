@@ -116,11 +116,7 @@ class CodexUsageConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         schema = vol.Schema(
             {
                 vol.Optional(
-                    "verification_url_copy",
-                    default=self._device_state.get("verification_url", ""),
-                ): selector.TextSelector(),
-                vol.Optional(
-                    "user_code_copy", default=self._device_state.get("user_code", "")
+                    "otp_code", default=self._device_state.get("user_code_compact", "")
                 ): selector.TextSelector(),
                 vol.Required("confirm_done", default=False): bool,
             }
@@ -132,7 +128,7 @@ class CodexUsageConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             errors=errors,
             description_placeholders={
                 "verification_url": self._device_state.get("verification_url", ""),
-                "user_code": self._device_state.get("user_code", ""),
+                "user_code": self._device_state.get("user_code_compact", ""),
             },
         )
 

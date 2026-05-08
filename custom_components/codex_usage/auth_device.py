@@ -4,16 +4,13 @@ from __future__ import annotations
 
 import base64
 import json
+import re
 from urllib.parse import urlencode
 
 from aiohttp import ClientError
 from homeassistant.helpers import aiohttp_client
 
 from .const import AUTH_ISSUER, CLIENT_ID
-
-
-def _b64url(data: bytes) -> str:
-    return base64.urlsafe_b64encode(data).rstrip(b"=").decode()
 
 
 def _claims_from_jwt(jwt_token: str) -> dict:
@@ -23,6 +20,10 @@ def _claims_from_jwt(jwt_token: str) -> dict:
         return json.loads(base64.urlsafe_b64decode(payload.encode()).decode())
     except Exception:
         return {}
+
+
+def _compact_user_code(user_code: str) -> str:
+    return re.sub(r"[^A-Za-z0-9]", "", user_code or "").upper()
 
 
 def account_id_from_id_token(id_token: str) -> str | None:
@@ -49,9 +50,11 @@ async def request_device_code(hass) -> dict:
     except ClientError as err:
         raise RuntimeError(f"Device code request failed: {err}") from err
 
+    raw_code = data["user_code"]
     return {
         "device_auth_id": data["device_auth_id"],
-        "user_code": data["user_code"],
+        "user_code": raw_code,
+        "user_code_compact": _compact_user_code(raw_code),
         "interval": int(data.get("interval", 5)),
         "verification_url": f"{AUTH_ISSUER}/codex/device",
     }

@@ -11,10 +11,9 @@
       },
       "device_code": {
         "title": "Sign in with ChatGPT",
-        "description": "1. Open: {verification_url}\n2. Enter code: {user_code}\n3. Complete login in your browser\n4. Return here and confirm.",
+        "description": "1. Open: {verification_url}\n2. Enter OTP code: {user_code}\n3. Complete login in your browser\n4. Return here and confirm.",
         "data": {
-          "verification_url_copy": "Verification URL (copy)",
-          "user_code_copy": "One-time code (copy)",
+          "otp_code": "OTP Code",
           "confirm_done": "I completed login in the browser"
         }
       },
