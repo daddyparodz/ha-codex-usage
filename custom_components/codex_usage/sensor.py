@@ -42,7 +42,8 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    coordinator: CodexUsageCoordinator = hass.data[DOMAIN][entry.entry_id]
+    stored = hass.data[DOMAIN][entry.entry_id]
+    coordinator: CodexUsageCoordinator = stored["coordinator"]
     async_add_entities([CodexUsageSensor(coordinator, entry, desc) for desc in SENSORS])
 
 
