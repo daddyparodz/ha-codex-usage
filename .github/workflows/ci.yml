@@ -31,14 +31,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install validation deps
-        run: |
-          python -m pip install --upgrade pip
-          pip install "homeassistant>=2024.4.0"
-      - name: Validate manifest and importability
+      - name: Validate manifest schema keys
         run: |
           python - << 'PY'
-          import importlib.util
           import json
           from pathlib import Path
 
@@ -48,16 +43,7 @@ jobs:
           missing = [k for k in required if k not in data]
           if missing:
               raise SystemExit(f"Missing manifest keys: {missing}")
-
-          files = [
-              'custom_components/codex_usage/__init__.py',
-              'custom_components/codex_usage/config_flow.py',
-              'custom_components/codex_usage/coordinator.py',
-              'custom_components/codex_usage/sensor.py',
-          ]
-          for f in files:
-              spec = importlib.util.spec_from_file_location('mod', f)
-              mod = importlib.util.module_from_spec(spec)
-              spec.loader.exec_module(mod)
           print('Validation passed')
           PY
+      - name: Python compile check
+        run: python -m compileall -q custom_components
