@@ -90,7 +90,11 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities,
 ) -> None:
-    coordinator: CodexUsageCoordinator = entry.runtime_data
+    # Compatibility fallback: some HA versions/extensions may not expose
+    # runtime_data on ConfigEntry in platform setup.
+    coordinator: CodexUsageCoordinator = getattr(entry, "runtime_data", None) or hass.data[
+        DOMAIN
+    ][entry.entry_id]
     entities = [CodexUsageSensor(coordinator, entry, desc) for desc in SENSORS]
     _LOGGER.debug("Adding %s codex_usage sensor entities", len(entities))
     async_add_entities(entities)
