@@ -3,15 +3,9 @@
     "step": {
       "user": {
         "title": "Codex Usage",
-        "description": "Choose authentication and polling settings.",
+        "description": "Choose authentication method.",
         "data": {
-          "auth_method": "Authentication method",
-          "codex_home": "Codex home path",
-          "access_token": "Access token (used only for access-token mode)",
-          "account_id": "ChatGPT account ID (optional)",
-          "backend_url": "Backend usage URL",
-          "refresh_url": "Refresh token URL",
-          "scan_interval": "Update interval (seconds)"
+          "auth_method": "Authentication method"
         }
       },
       "device_code": {
@@ -19,6 +13,30 @@
         "description": "1. Open: {verification_url}\n2. Enter code: {user_code}\n3. Complete login in your browser\n4. Return here and confirm.",
         "data": {
           "confirm_done": "I completed login in the browser"
+        }
+      },
+      "auth_json": {
+        "title": "Use auth.json",
+        "description": "Use existing Codex credentials from auth.json.",
+        "data": {
+          "codex_home": "Codex home path"
+        }
+      },
+      "access_token": {
+        "title": "Use access token",
+        "description": "Paste an access token manually.",
+        "data": {
+          "access_token": "Access token",
+          "account_id": "ChatGPT account ID (optional)"
+        }
+      },
+      "advanced": {
+        "title": "Advanced settings",
+        "description": "Optional advanced settings.",
+        "data": {
+          "backend_url": "Backend usage URL",
+          "refresh_url": "Refresh token URL",
+          "scan_interval": "Update interval (seconds)"
         }
       }
     },
