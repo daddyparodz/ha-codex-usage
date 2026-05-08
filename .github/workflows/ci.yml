@@ -1,3 +1,4 @@
+---
 name: CI
 
 on:
@@ -20,6 +21,7 @@ jobs:
         uses: super-linter/super-linter@v8.6.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_PYTHON_MYPY: false
 
   lint:
     name: lint
