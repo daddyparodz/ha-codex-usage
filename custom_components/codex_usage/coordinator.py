@@ -34,6 +34,11 @@ from .const import (
     RESET_CREDITS_URL,
 )
 from .reset_credits import normalize_reset_credits
+from .usage_windows import (
+    classify_rate_limit_windows,
+    window_reset_epoch,
+    window_used_percent,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -295,21 +300,26 @@ class CodexUsageCoordinator(DataUpdateCoordinator[dict]):
             raise UpdateFailed(f"Network error: {err}") from err
 
         rate = raw.get("rate_limit") or raw.get("rateLimits") or {}
-        primary = rate.get("primary_window") or rate.get("primary") or {}
-        secondary = rate.get("secondary_window") or rate.get("secondary") or {}
+        primary, secondary = classify_rate_limit_windows(rate)
 
-        p_used = float(primary.get("used_percent", 0))
-        s_used = float(secondary.get("used_percent", 0))
+        p_used = window_used_percent(primary)
+        s_used = window_used_percent(secondary)
 
         normalized = {
             "plan": raw.get("plan_type") or raw.get("planType"),
             "primary_used_percent": p_used,
-            "primary_remaining_percent": max(0.0, 100.0 - p_used),
-            "primary_reset_time": _format_reset_time(primary.get("reset_at"), include_date=False),
+            "primary_remaining_percent": (
+                max(0.0, 100.0 - p_used) if p_used is not None else None
+            ),
+            "primary_reset_time": _format_reset_time(
+                window_reset_epoch(primary), include_date=False
+            ),
             "secondary_used_percent": s_used,
-            "secondary_remaining_percent": max(0.0, 100.0 - s_used),
+            "secondary_remaining_percent": (
+                max(0.0, 100.0 - s_used) if s_used is not None else None
+            ),
             "secondary_reset_time": _format_reset_time(
-                secondary.get("reset_at"), include_date=True
+                window_reset_epoch(secondary), include_date=True
             ),
             "credits_balance": (raw.get("credits") or {}).get("balance"),
             "rate_limit_reached_type": (
