@@ -37,14 +37,14 @@ class ResetCalendarTest(unittest.TestCase):
             "redeemed_at": None,
         }
 
-    def test_builds_one_event_with_grant_and_expiry(self):
+    def test_builds_one_short_event_at_expiry(self):
         events = CALENDAR.build_reset_credit_events([self.credit], self.now)
 
         self.assertEqual(len(events), 1)
         self.assertEqual(events[0]["uid"], "credit-one")
-        self.assertEqual(events[0]["start"], datetime(2026, 7, 13, 18, 5, 12, tzinfo=UTC))
-        self.assertEqual(events[0]["end"], datetime(2026, 8, 12, 18, 5, 12, tzinfo=UTC))
-        self.assertEqual(events[0]["summary"], "Codex banked reset")
+        self.assertEqual(events[0]["start"], datetime(2026, 8, 12, 18, 5, 12, tzinfo=UTC))
+        self.assertEqual(events[0]["end"], datetime(2026, 8, 12, 18, 6, 12, tzinfo=UTC))
+        self.assertEqual(events[0]["summary"], "Codex banked reset expires")
 
     def test_redeemed_credit_disappears(self):
         self.credit["status"] = "redeemed"
@@ -68,10 +68,18 @@ class ResetCalendarTest(unittest.TestCase):
         self.assertEqual(
             CALENDAR.events_in_range(
                 events,
+                datetime(2026, 8, 12, tzinfo=UTC),
+                datetime(2026, 8, 13, tzinfo=UTC),
+            ),
+            events,
+        )
+        self.assertEqual(
+            CALENDAR.events_in_range(
+                events,
                 datetime(2026, 8, 1, tzinfo=UTC),
                 datetime(2026, 8, 2, tzinfo=UTC),
             ),
-            events,
+            [],
         )
         self.assertEqual(
             CALENDAR.events_in_range(
