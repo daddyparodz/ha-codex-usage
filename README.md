@@ -71,10 +71,11 @@ After setup, open integration options to change:
 and remaining lifetime. Reset credits are refreshed every five minutes while
 their remaining lifetime is recalculated on every normal integration update.
 
-Each credit also gets its own timestamp sensor. The sensor state is the expiry
-time (displayed in Home Assistant's local timezone), and its attributes include
-`granted_at`, `expires_at`, `status`, and `remaining`. New credit entities are
-added automatically when the API grants them.
+All usable credits also appear as events in `calendar.codex_reset_credits`.
+Each event starts when the credit is granted and ends when it expires, with its
+status and remaining lifetime in the description. The integration keeps a
+single calendar entity: events are refreshed every minute and disappear
+automatically when credits expire or are redeemed.
 
 ## Notes
 
