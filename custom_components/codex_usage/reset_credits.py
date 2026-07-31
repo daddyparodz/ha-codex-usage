@@ -1,4 +1,4 @@
-"""Normalization helpers for Codex rate-limit reset credits."""
+"""Normalization helpers for Codex banked resets."""
 
 from __future__ import annotations
 
@@ -28,15 +28,15 @@ def _format_remaining(seconds: int) -> str:
 
 
 def normalize_reset_credits(payload: object, now: datetime | None = None) -> dict:
-    """Convert the reset-credit API response into stable HA state and attributes."""
+    """Convert the banked-reset API response into stable HA state and attributes."""
     if not isinstance(payload, dict):
-        raise ValueError("The reset-credit API returned an unexpected response")
+        raise ValueError("The banked-reset API returned an unexpected response")
 
     raw_credits = payload.get("credits")
     if raw_credits is None:
         raw_credits = []
     if not isinstance(raw_credits, list):
-        raise ValueError("The reset-credit API returned an unexpected credits value")
+        raise ValueError("The banked-reset API returned an unexpected resets value")
 
     current = now or datetime.now(tz=UTC)
     if current.tzinfo is None:

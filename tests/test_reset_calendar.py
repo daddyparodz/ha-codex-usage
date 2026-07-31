@@ -1,4 +1,4 @@
-"""Tests for reset-credit calendar event generation."""
+"""Tests for banked-reset calendar event generation."""
 
 import sys
 import types
@@ -44,6 +44,7 @@ class ResetCalendarTest(unittest.TestCase):
         self.assertEqual(events[0]["uid"], "credit-one")
         self.assertEqual(events[0]["start"], datetime(2026, 7, 13, 18, 5, 12, tzinfo=UTC))
         self.assertEqual(events[0]["end"], datetime(2026, 8, 12, 18, 5, 12, tzinfo=UTC))
+        self.assertEqual(events[0]["summary"], "Codex banked reset")
 
     def test_redeemed_credit_disappears(self):
         self.credit["status"] = "redeemed"

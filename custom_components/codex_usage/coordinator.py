@@ -212,14 +212,14 @@ class CodexUsageCoordinator(DataUpdateCoordinator[dict]):
                 if resp.status >= 400:
                     body = await resp.text()
                     raise UpdateFailed(
-                        f"Codex reset-credit request failed: HTTP {resp.status} {body}"
+                        f"Codex banked-reset request failed: HTTP {resp.status} {body}"
                     )
                 payload = await resp.json()
         except ClientError as err:
-            raise UpdateFailed(f"Reset-credit network error: {err}") from err
+            raise UpdateFailed(f"Banked-reset network error: {err}") from err
 
         if not isinstance(payload, dict):
-            raise UpdateFailed("The reset-credit API returned an unexpected response")
+            raise UpdateFailed("The banked-reset API returned an unexpected response")
         return payload
 
     async def _async_get_reset_credits(
@@ -241,7 +241,7 @@ class CodexUsageCoordinator(DataUpdateCoordinator[dict]):
                 self._reset_credits_last_fetch = now
             except (UpdateFailed, ValueError) as err:
                 error = str(err)
-                _LOGGER.warning("Unable to refresh Codex reset credits: %s", err)
+                _LOGGER.warning("Unable to refresh Codex banked resets: %s", err)
 
         if self._reset_credits_payload is None:
             return {

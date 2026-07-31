@@ -1,4 +1,4 @@
-"""Tests for reset-credit response normalization."""
+"""Tests for banked-reset response normalization."""
 
 import unittest
 from datetime import UTC, datetime
@@ -84,7 +84,7 @@ class NormalizeResetCreditsTest(unittest.TestCase):
         self.assertNotEqual(first["reset_credits"][0]["id"], first["reset_credits"][1]["id"])
 
     def test_rejects_invalid_credits_collection(self):
-        with self.assertRaisesRegex(ValueError, "unexpected credits"):
+        with self.assertRaisesRegex(ValueError, "unexpected resets"):
             RESET_CREDITS.normalize_reset_credits({"credits": {}})
 
 

@@ -1,4 +1,4 @@
-"""Calendar platform for Codex reset credits."""
+"""Calendar platform for Codex banked resets."""
 
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities,
 ) -> None:
-    """Set up the Codex reset-credit calendar."""
+    """Set up the Codex banked-resets calendar."""
     coordinator: CodexUsageCoordinator = getattr(entry, "runtime_data", None) or hass.data[
         DOMAIN
     ][entry.entry_id]
@@ -28,10 +28,10 @@ async def async_setup_entry(
 
 
 class CodexResetCreditsCalendar(CoordinatorEntity[CodexUsageCoordinator], CalendarEntity):
-    """One automatically updated calendar containing all usable reset credits."""
+    """One automatically updated calendar containing all usable banked resets."""
 
     _attr_has_entity_name = False
-    _attr_name = "Codex Reset Credits"
+    _attr_name = "Codex Banked Resets"
     _attr_icon = "mdi:calendar-refresh"
     _attr_unique_id = "codex_reset_credits_calendar"
     _attr_suggested_object_id = "codex_reset_credits"
@@ -74,6 +74,6 @@ class CodexResetCreditsCalendar(CoordinatorEntity[CodexUsageCoordinator], Calend
         start_date: datetime,
         end_date: datetime,
     ) -> list[CalendarEvent]:
-        """Return reset-credit events overlapping the requested time range."""
+        """Return banked-reset events overlapping the requested time range."""
         data = build_reset_credit_events((self.coordinator.data or {}).get("reset_credits", []))
         return [CalendarEvent(**event) for event in events_in_range(data, start_date, end_date)]
