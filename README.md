@@ -8,7 +8,7 @@ A custom Home Assistant integration (via HACS) that exposes your Codex usage as 
 - Weekly usage and remaining percentage
 - Reset time sensors for both windows
 - Plan, credits, and limit status sensors
-- Available rate-limit reset credits, with grant/expiry details
+- Banked resets, with grant/expiry details
 - Browser-based ChatGPT login (device code)
 
 ## Authentication
@@ -66,16 +66,18 @@ After setup, open integration options to change:
 - `sensor.codex_limit_status`
 - `sensor.codex_resets_available`
 
-`sensor.codex_resets_available` exposes the number of usable reset credits. Its
-`credits` attribute lists each credit's grant time, expiry time, current status,
-and remaining lifetime. Reset credits are refreshed every five minutes while
-their remaining lifetime is recalculated on every normal integration update.
+`sensor.codex_resets_available` is named **Codex Banked Resets** and exposes the
+number of usable banked resets. Its `banked_resets` attribute lists each reset's
+grant time, expiry time, current status, and remaining lifetime. Banked resets
+are refreshed every minute while their remaining lifetime is recalculated
+on every normal integration update.
 
-All usable credits also appear as events in `calendar.codex_reset_credits`.
-Each event starts when the credit is granted and ends when it expires, with its
-status and remaining lifetime in the description. The integration keeps a
-single calendar entity: events are refreshed every minute and disappear
-automatically when credits expire or are redeemed.
+All usable banked resets also appear as events in
+`calendar.codex_reset_credits`, named **Codex Banked Resets**. Each event starts
+when the reset is granted and ends when it expires, with its status and
+remaining lifetime in the description. The integration keeps a single calendar
+entity: events are refreshed every minute and disappear automatically when
+resets expire or are redeemed.
 
 ## Notes
 

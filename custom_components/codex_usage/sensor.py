@@ -97,7 +97,7 @@ SENSORS = [
     (
         SensorEntityDescription(
             key="reset_credits_available",
-            name="Codex Resets Available",
+            name="Codex Banked Resets",
             icon="mdi:restore-alert",
         ),
         "codex_resets_available",
@@ -168,9 +168,11 @@ class CodexUsageSensor(CoordinatorEntity[CodexUsageCoordinator], SensorEntity):
         if self.entity_description.key == "reset_credits_available":
             attributes.update(
                 {
-                    "credits": data.get("reset_credits", []),
+                    "banked_resets": data.get("reset_credits", []),
                     "next_expiration": data.get("reset_credits_next_expiration"),
-                    "credits_last_update": data.get("reset_credits_last_update"),
+                    "banked_resets_last_update": data.get(
+                        "reset_credits_last_update"
+                    ),
                     "error": data.get("reset_credits_error"),
                 }
             )

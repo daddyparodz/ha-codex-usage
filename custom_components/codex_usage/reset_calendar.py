@@ -1,4 +1,4 @@
-"""Pure helpers for representing reset credits as calendar events."""
+"""Pure helpers for representing banked resets as calendar events."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ AVAILABLE_STATUSES = {"active", "available"}
 def build_reset_credit_events(
     credits: list[dict], now: datetime | None = None
 ) -> list[dict]:
-    """Build active calendar event data from normalized reset credits."""
+    """Build active calendar event data from normalized banked resets."""
     current = now or datetime.now(tz=UTC)
     if current.tzinfo is None:
         current = current.replace(tzinfo=UTC)
@@ -33,7 +33,7 @@ def build_reset_credit_events(
                 "uid": str(credit.get("id") or ""),
                 "start": start,
                 "end": end,
-                "summary": "Codex reset credit",
+                "summary": "Codex banked reset",
                 "description": (
                     f"Status: {status}\n"
                     f"Granted: {start.isoformat()}\n"
