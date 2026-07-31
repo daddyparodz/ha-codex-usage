@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
+import hashlib
 from datetime import UTC, datetime
 
 
-def _parse_timestamp(value: object) -> datetime | None:
+def parse_timestamp(value: object) -> datetime | None:
     if not isinstance(value, str) or not value:
         return None
 
@@ -49,8 +50,10 @@ def normalize_reset_credits(payload: object, now: datetime | None = None) -> dic
 
         granted_at = raw_credit.get("granted_at")
         expires_at = raw_credit.get("expires_at")
-        expiry = _parse_timestamp(expires_at)
+        expiry = parse_timestamp(expires_at)
+        identity = f"{granted_at or ''}|{expires_at or ''}"
         credit = {
+            "id": hashlib.sha256(identity.encode()).hexdigest()[:12],
             "granted_at": granted_at if isinstance(granted_at, str) else None,
             "expires_at": expires_at if isinstance(expires_at, str) else None,
         }

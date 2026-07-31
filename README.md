@@ -71,6 +71,11 @@ After setup, open integration options to change:
 and remaining lifetime. Reset credits are refreshed every five minutes while
 their remaining lifetime is recalculated on every normal integration update.
 
+Each credit also gets its own timestamp sensor. The sensor state is the expiry
+time (displayed in Home Assistant's local timezone), and its attributes include
+`granted_at`, `expires_at`, `status`, and `remaining`. New credit entities are
+added automatically when the API grants them.
+
 ## Notes
 
 - This integration relies on internal endpoints and may require updates if upstream APIs change.
