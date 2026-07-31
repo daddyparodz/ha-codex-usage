@@ -51,31 +51,40 @@ def normalize_reset_credits(payload: object, now: datetime | None = None) -> dic
         granted_at = raw_credit.get("granted_at")
         expires_at = raw_credit.get("expires_at")
         expiry = parse_timestamp(expires_at)
-        identity = f"{granted_at or ''}|{expires_at or ''}"
+        source_id = raw_credit.get("id")
+        identity = source_id or f"{granted_at or ''}|{expires_at or ''}"
         credit = {
             "id": hashlib.sha256(identity.encode()).hexdigest()[:12],
             "granted_at": granted_at if isinstance(granted_at, str) else None,
             "expires_at": expires_at if isinstance(expires_at, str) else None,
+            "redeemed_at": raw_credit.get("redeemed_at"),
         }
 
-        if expiry is None:
+        api_status = raw_credit.get("status")
+        if isinstance(api_status, str) and api_status:
+            credit["status"] = api_status.lower()
+        elif expiry is None:
             credit["status"] = "unknown"
+        elif expiry <= current:
+            credit["status"] = "expired"
+        else:
+            credit["status"] = "active"
+
+        if expiry is None:
             credit["remaining"] = None
         else:
             remaining_seconds = max(0, int((expiry - current).total_seconds()))
-            if remaining_seconds == 0:
-                credit["status"] = "expired"
-                credit["remaining"] = "0h 0m"
-            else:
-                credit["status"] = "active"
-                credit["remaining"] = _format_remaining(remaining_seconds)
+            credit["remaining"] = _format_remaining(remaining_seconds)
+            if credit["status"] in ("active", "available") and remaining_seconds:
                 active_expirations.append(expiry)
 
         credits.append(credit)
 
     available_count = payload.get("available_count")
     if not isinstance(available_count, int) or isinstance(available_count, bool):
-        available_count = sum(credit["status"] == "active" for credit in credits)
+        available_count = sum(
+            credit["status"] in ("active", "available") for credit in credits
+        )
 
     next_expiration = min(active_expirations).isoformat() if active_expirations else None
     return {

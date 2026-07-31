@@ -3,7 +3,7 @@
 from homeassistant.const import Platform
 
 DOMAIN = "codex_usage"
-PLATFORMS = [Platform.SENSOR]
+PLATFORMS = [Platform.SENSOR, Platform.CALENDAR]
 
 CLIENT_ID = "app_EMoamEEZ73f0CkXaXp7hrann"
 AUTH_ISSUER = "https://auth.openai.com"
@@ -27,4 +27,4 @@ DEFAULT_BACKEND_URL = "https://chatgpt.com/backend-api/wham/usage"
 RESET_CREDITS_URL = "https://chatgpt.com/backend-api/wham/rate-limit-reset-credits"
 DEFAULT_REFRESH_URL = "https://auth.openai.com/oauth/token"
 DEFAULT_SCAN_INTERVAL = 60
-RESET_CREDITS_SCAN_INTERVAL = 300
+RESET_CREDITS_SCAN_INTERVAL = 60
