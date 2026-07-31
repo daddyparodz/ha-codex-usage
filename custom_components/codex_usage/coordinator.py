@@ -30,7 +30,10 @@ from .const import (
     DEFAULT_REFRESH_URL,
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
+    RESET_CREDITS_SCAN_INTERVAL,
+    RESET_CREDITS_URL,
 )
+from .reset_credits import normalize_reset_credits
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -71,6 +74,8 @@ class CodexUsageCoordinator(DataUpdateCoordinator[dict]):
         self.hass = hass
         self.entry = entry
         self._cfg = entry.data
+        self._reset_credits_payload: dict | None = None
+        self._reset_credits_last_fetch: datetime | None = None
 
         scan_interval = int(
             entry.options.get(
@@ -183,6 +188,83 @@ class CodexUsageCoordinator(DataUpdateCoordinator[dict]):
 
         return token, file_account_id or account_id
 
+    async def _async_fetch_reset_credits(
+        self, token: str, account_id: str | None
+    ) -> dict:
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Accept": "application/json",
+            "OpenAI-Beta": "codex-1",
+            "originator": "Codex Desktop",
+            "User-Agent": "codex-usage-ha-integration",
+        }
+        if account_id:
+            headers["ChatGPT-Account-ID"] = account_id
+
+        session = aiohttp_client.async_get_clientsession(self.hass)
+        try:
+            async with session.get(RESET_CREDITS_URL, headers=headers, timeout=30) as resp:
+                if resp.status >= 400:
+                    body = await resp.text()
+                    raise UpdateFailed(
+                        f"Codex reset-credit request failed: HTTP {resp.status} {body}"
+                    )
+                payload = await resp.json()
+        except ClientError as err:
+            raise UpdateFailed(f"Reset-credit network error: {err}") from err
+
+        if not isinstance(payload, dict):
+            raise UpdateFailed("The reset-credit API returned an unexpected response")
+        return payload
+
+    async def _async_get_reset_credits(
+        self, token: str, account_id: str | None
+    ) -> dict:
+        now = datetime.now(tz=UTC)
+        cache_age = (
+            (now - self._reset_credits_last_fetch).total_seconds()
+            if self._reset_credits_last_fetch
+            else RESET_CREDITS_SCAN_INTERVAL
+        )
+        error: str | None = None
+
+        if self._reset_credits_payload is None or cache_age >= RESET_CREDITS_SCAN_INTERVAL:
+            try:
+                self._reset_credits_payload = await self._async_fetch_reset_credits(
+                    token, account_id
+                )
+                self._reset_credits_last_fetch = now
+            except (UpdateFailed, ValueError) as err:
+                error = str(err)
+                _LOGGER.warning("Unable to refresh Codex reset credits: %s", err)
+
+        if self._reset_credits_payload is None:
+            return {
+                "reset_credits_available": None,
+                "reset_credits": [],
+                "reset_credits_next_expiration": None,
+                "reset_credits_last_update": None,
+                "reset_credits_error": error,
+            }
+
+        try:
+            normalized = normalize_reset_credits(self._reset_credits_payload, now)
+        except ValueError as err:
+            normalized = {
+                "reset_credits_available": None,
+                "reset_credits": [],
+                "reset_credits_next_expiration": None,
+            }
+            error = str(err)
+
+        normalized["reset_credits_last_update"] = (
+            self._reset_credits_last_fetch.isoformat()
+            if self._reset_credits_last_fetch
+            else None
+        )
+        normalized["reset_credits_error"] = error
+        return normalized
+
     async def _async_update_data(self) -> dict:
         token, account_id = await self._async_get_bearer()
         backend_url = self._cfg.get(CONF_BACKEND_URL, DEFAULT_BACKEND_URL)
@@ -219,7 +301,7 @@ class CodexUsageCoordinator(DataUpdateCoordinator[dict]):
         p_used = float(primary.get("used_percent", 0))
         s_used = float(secondary.get("used_percent", 0))
 
-        return {
+        normalized = {
             "plan": raw.get("plan_type") or raw.get("planType"),
             "primary_used_percent": p_used,
             "primary_remaining_percent": max(0.0, 100.0 - p_used),
@@ -238,3 +320,5 @@ class CodexUsageCoordinator(DataUpdateCoordinator[dict]):
             or "OK",
             "last_update": datetime.now(tz=UTC).isoformat(),
         }
+        normalized.update(await self._async_get_reset_credits(token, account_id))
+        return normalized

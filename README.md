@@ -8,6 +8,7 @@ A custom Home Assistant integration (via HACS) that exposes your Codex usage as 
 - Weekly usage and remaining percentage
 - Reset time sensors for both windows
 - Plan, credits, and limit status sensors
+- Available rate-limit reset credits, with grant/expiry details
 - Browser-based ChatGPT login (device code)
 
 ## Authentication
@@ -63,6 +64,12 @@ After setup, open integration options to change:
 - `sensor.codex_credits`
 - `sensor.codex_plan`
 - `sensor.codex_limit_status`
+- `sensor.codex_resets_available`
+
+`sensor.codex_resets_available` exposes the number of usable reset credits. Its
+`credits` attribute lists each credit's grant time, expiry time, current status,
+and remaining lifetime. Reset credits are refreshed every five minutes while
+their remaining lifetime is recalculated on every normal integration update.
 
 ## Notes
 

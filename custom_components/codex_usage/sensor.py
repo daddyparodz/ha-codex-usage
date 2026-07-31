@@ -93,6 +93,14 @@ SENSORS = [
         ),
         "codex_limit_status",
     ),
+    (
+        SensorEntityDescription(
+            key="reset_credits_available",
+            name="Codex Resets Available",
+            icon="mdi:restore-alert",
+        ),
+        "codex_resets_available",
+    ),
 ]
 
 
@@ -150,4 +158,14 @@ class CodexUsageSensor(CoordinatorEntity[CodexUsageCoordinator], SensorEntity):
     @property
     def extra_state_attributes(self):
         data = self.coordinator.data or {}
-        return {"last_update": data.get("last_update")}
+        attributes = {"last_update": data.get("last_update")}
+        if self.entity_description.key == "reset_credits_available":
+            attributes.update(
+                {
+                    "credits": data.get("reset_credits", []),
+                    "next_expiration": data.get("reset_credits_next_expiration"),
+                    "credits_last_update": data.get("reset_credits_last_update"),
+                    "error": data.get("reset_credits_error"),
+                }
+            )
+        return attributes
