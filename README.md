@@ -74,10 +74,12 @@ on every normal integration update.
 
 All usable banked resets also appear as events in
 `calendar.codex_reset_credits`, named **Codex Banked Resets**. Each event starts
-when the reset is granted and ends when it expires, with its status and
-remaining lifetime in the description. The integration keeps a single calendar
-entity: events are refreshed every minute and disappear automatically when
-resets expire or are redeemed.
+at the exact expiration time and lasts one minute, so the calendar marks only
+when the reset expires instead of spanning its entire lifetime. Grant time,
+expiration time, status, and remaining lifetime stay available in the event
+description. The integration keeps a single calendar entity: events are
+refreshed every minute and disappear automatically when resets expire or are
+redeemed.
 
 ## Notes
 

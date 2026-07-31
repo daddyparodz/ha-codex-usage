@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 from .reset_credits import parse_timestamp
 
 AVAILABLE_STATUSES = {"active", "available"}
+EXPIRY_EVENT_DURATION = timedelta(minutes=1)
 
 
 def build_reset_credit_events(
@@ -23,21 +24,26 @@ def build_reset_credit_events(
         if status not in AVAILABLE_STATUSES or credit.get("redeemed_at"):
             continue
 
-        start = parse_timestamp(credit.get("granted_at"))
-        end = parse_timestamp(credit.get("expires_at"))
-        if start is None or end is None or end <= start or end <= current:
+        granted_at = parse_timestamp(credit.get("granted_at"))
+        expires_at = parse_timestamp(credit.get("expires_at"))
+        if (
+            granted_at is None
+            or expires_at is None
+            or expires_at <= granted_at
+            or expires_at <= current
+        ):
             continue
 
         events.append(
             {
                 "uid": str(credit.get("id") or ""),
-                "start": start,
-                "end": end,
-                "summary": "Codex banked reset",
+                "start": expires_at,
+                "end": expires_at + EXPIRY_EVENT_DURATION,
+                "summary": "Codex banked reset expires",
                 "description": (
                     f"Status: {status}\n"
-                    f"Granted: {start.isoformat()}\n"
-                    f"Expires: {end.isoformat()}\n"
+                    f"Granted: {granted_at.isoformat()}\n"
+                    f"Expires: {expires_at.isoformat()}\n"
                     f"Remaining: {credit.get('remaining') or 'unknown'}"
                 ),
             }
