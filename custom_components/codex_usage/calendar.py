@@ -31,7 +31,7 @@ class CodexResetCreditsCalendar(CoordinatorEntity[CodexUsageCoordinator], Calend
     """One automatically updated calendar containing all usable banked resets."""
 
     _attr_has_entity_name = False
-    _attr_name = "Codex Banked Resets"
+    _attr_name = "Banked Resets"
     _attr_icon = "mdi:calendar-refresh"
     _attr_unique_id = "codex_reset_credits_calendar"
     _attr_suggested_object_id = "codex_reset_credits"
