@@ -66,14 +66,17 @@ After setup, open integration options to change:
 - `sensor.codex_limit_status`
 - `sensor.codex_resets_available`
 
-`sensor.codex_resets_available` is named **Codex Banked Resets** and exposes the
+Display names omit the redundant `Codex` prefix because the entities already belong to
+the **Codex Usage** device. Entity IDs and unique IDs remain unchanged.
+
+`sensor.codex_resets_available` is named **Banked Resets** and exposes the
 number of usable banked resets. Its `banked_resets` attribute lists each reset's
 grant time, expiry time, current status, and remaining lifetime. Banked resets
 are refreshed every minute while their remaining lifetime is recalculated
 on every normal integration update.
 
 All usable banked resets also appear as events in
-`calendar.codex_reset_credits`, named **Codex Banked Resets**. Each event starts
+`calendar.codex_reset_credits`, named **Banked Resets**. Each event starts
 at the exact expiration time and lasts one minute, so the calendar marks only
 when the reset expires instead of spanning its entire lifetime. Grant time,
 expiration time, status, and remaining lifetime stay available in the event
