@@ -21,7 +21,7 @@ SENSORS = [
     (
         SensorEntityDescription(
             key="primary_used_percent",
-            name="Codex 5h Used",
+            name="5h Used",
             native_unit_of_measurement=PERCENTAGE,
             icon="mdi:timer-sand",
         ),
@@ -30,7 +30,7 @@ SENSORS = [
     (
         SensorEntityDescription(
             key="primary_remaining_percent",
-            name="Codex 5h Remaining",
+            name="5h Remaining",
             native_unit_of_measurement=PERCENTAGE,
             icon="mdi:timer-outline",
         ),
@@ -39,7 +39,7 @@ SENSORS = [
     (
         SensorEntityDescription(
             key="primary_reset_time",
-            name="Codex 5h Reset",
+            name="5h Reset",
             icon="mdi:clock-outline",
         ),
         "codex_5h_reset",
@@ -47,7 +47,7 @@ SENSORS = [
     (
         SensorEntityDescription(
             key="secondary_used_percent",
-            name="Codex Weekly Used",
+            name="Weekly Used",
             native_unit_of_measurement=PERCENTAGE,
             icon="mdi:calendar-week",
         ),
@@ -56,7 +56,7 @@ SENSORS = [
     (
         SensorEntityDescription(
             key="secondary_remaining_percent",
-            name="Codex Weekly Remaining",
+            name="Weekly Remaining",
             native_unit_of_measurement=PERCENTAGE,
             icon="mdi:calendar-check",
         ),
@@ -65,7 +65,7 @@ SENSORS = [
     (
         SensorEntityDescription(
             key="secondary_reset_time",
-            name="Codex Weekly Reset",
+            name="Weekly Reset",
             icon="mdi:calendar-clock",
         ),
         "codex_weekly_reset",
@@ -73,7 +73,7 @@ SENSORS = [
     (
         SensorEntityDescription(
             key="credits_balance",
-            name="Codex Credits",
+            name="Credits",
             icon="mdi:cash",
         ),
         "codex_credits",
@@ -81,7 +81,7 @@ SENSORS = [
     (
         SensorEntityDescription(
             key="plan",
-            name="Codex Plan",
+            name="Plan",
             icon="mdi:account-badge",
         ),
         "codex_plan",
@@ -89,7 +89,7 @@ SENSORS = [
     (
         SensorEntityDescription(
             key="rate_limit_reached_type",
-            name="Codex Limit Status",
+            name="Limit Status",
             icon="mdi:alert-circle",
         ),
         "codex_limit_status",
@@ -97,7 +97,7 @@ SENSORS = [
     (
         SensorEntityDescription(
             key="reset_credits_available",
-            name="Codex Banked Resets",
+            name="Banked Resets",
             icon="mdi:restore-alert",
         ),
         "codex_resets_available",
