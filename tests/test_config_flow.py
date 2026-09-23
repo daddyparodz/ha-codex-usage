@@ -20,6 +20,7 @@ from custom_components.codex_usage.const import (
     CONF_AUTH_METHOD,
     CONF_ID_TOKEN,
     CONF_REFRESH_TOKEN,
+    DEFAULT_SCAN_INTERVAL,
     DOMAIN,
 )
 
@@ -256,3 +257,8 @@ def test_runtime_translations_use_real_newlines() -> None:
         assert "\\n" not in message
         assert "{verification_url}" in message
         assert "{user_code}" in message
+
+
+def test_default_scan_interval_is_30_seconds() -> None:
+    """Use 30 seconds as the default usage polling interval."""
+    assert DEFAULT_SCAN_INTERVAL == 30
