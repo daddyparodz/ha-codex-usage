@@ -1,0 +1,56 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Codex Usage",
+        "description": "Choose authentication method.",
+        "data": {
+          "auth_method": "Authentication method",
+          "scan_interval": "Update interval (seconds)"
+        }
+      },
+      "device_code_retry": {
+        "title": "Sign in with ChatGPT",
+        "description": "The previous device login could not be completed. Submit to generate a new device code and try again."
+      },
+      "access_token": {
+        "title": "Use access token",
+        "description": "Paste an access token manually.",
+        "data": {
+          "access_token": "Access token",
+          "account_id": "ChatGPT account ID (optional)"
+        }
+      }
+    },
+    "progress": {
+      "wait_for_device": "Open the following URL and sign in with ChatGPT:\n{verification_url}\n\nEnter this one-time code:\n\n```{user_code}```\n\nHome Assistant will continue automatically after Codex confirms the login. The code expires after 15 minutes."
+    },
+    "error": {
+      "access_token_required": "Access token is required for this auth method.",
+      "device_code_init_failed": "Failed to start device-code login.",
+      "device_code_poll_failed": "Failed while checking authorization status.",
+      "device_code_expired": "The device code expired before login completed. Generate a new code and try again.",
+      "device_code_cancelled": "The device login task was cancelled. Generate a new code and try again.",
+      "token_exchange_failed": "Authorization completed, but token exchange failed."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Codex Usage options",
+        "description": "Adjust polling behavior.",
+        "data": {
+          "scan_interval": "Update interval (seconds)"
+        }
+      }
+    }
+  },
+  "selector": {
+    "auth_method": {
+      "options": {
+        "device_code": "Sign in with ChatGPT (recommended)",
+        "access_token": "Paste access token manually"
+      }
+    }
+  }
+}
