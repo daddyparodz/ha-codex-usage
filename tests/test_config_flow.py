@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import asyncio
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, Mock
 
 import pytest
 from homeassistant.data_entry_flow import FlowResultType
@@ -214,7 +214,7 @@ async def test_device_login_task_cancelled_on_flow_remove(monkeypatch) -> None:
 async def test_device_login_step_reuses_same_task(monkeypatch) -> None:
     """Do not start duplicate polling when Home Assistant revisits the progress step."""
     gate = asyncio.Event()
-    wait = AsyncMock()
+    wait = Mock()
 
     async def wait_for_login(*args, **kwargs):
         wait()
