@@ -9,13 +9,9 @@
           "scan_interval": "Update interval (seconds)"
         }
       },
-      "device_code": {
+      "device_code_retry": {
         "title": "Sign in with ChatGPT",
-        "description": "1. Open: {verification_url}\n2. Enter OTP code: {user_code}\n3. Complete login in your browser\n4. Return here and confirm.",
-        "data": {
-          "otp_code": "OTP Code",
-          "confirm_done": "Browser login completed"
-        }
+        "description": "The previous device login could not be completed. Submit to generate a new device code and try again."
       },
       "access_token": {
         "title": "Use access token",
@@ -26,12 +22,15 @@
         }
       }
     },
+    "progress": {
+      "wait_for_device": "Open the following URL and sign in with ChatGPT:\\n{verification_url}\\n\\nEnter this one-time code:\\n\\n```{user_code}```\\n\\nHome Assistant is waiting for Codex to confirm the login. The code expires after 15 minutes."
+    },
     "error": {
       "access_token_required": "Access token is required for this auth method.",
       "device_code_init_failed": "Failed to start device-code login.",
-      "device_code_not_completed": "Complete the browser login first.",
-      "device_code_pending": "Authorization is still pending. Try again in a few seconds.",
       "device_code_poll_failed": "Failed while checking authorization status.",
+      "device_code_expired": "The device code expired before login completed. Generate a new code and try again.",
+      "device_code_cancelled": "The device login task was cancelled. Generate a new code and try again.",
       "token_exchange_failed": "Authorization completed, but token exchange failed."
     }
   },
@@ -51,11 +50,6 @@
       "options": {
         "device_code": "Sign in with ChatGPT (recommended)",
         "access_token": "Paste access token manually"
-      }
-    },
-    "confirm_done": {
-      "options": {
-        "yes": "Yes, completed"
       }
     }
   }

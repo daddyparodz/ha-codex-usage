@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import base64
 import json
 import re
@@ -11,6 +12,12 @@ from aiohttp import ClientError
 from homeassistant.helpers import aiohttp_client
 
 from .const import AUTH_ISSUER, CLIENT_ID
+
+DEVICE_CODE_TIMEOUT_SECONDS = 15 * 60
+
+
+class DeviceLoginExpired(RuntimeError):
+    """Raised when a Codex device code expires before authorization completes."""
 
 
 def _claims_from_jwt(jwt_token: str) -> dict:
@@ -47,7 +54,7 @@ async def request_device_code(hass) -> dict:
             if resp.status >= 400:
                 raise RuntimeError(f"Device code request failed: HTTP {resp.status} {body}")
             data = json.loads(body)
-    except ClientError as err:
+    except (ClientError, TimeoutError) as err:
         raise RuntimeError(f"Device code request failed: {err}") from err
 
     raw_code = data["user_code"]
@@ -76,8 +83,32 @@ async def poll_device_code_once(hass, device_auth_id: str, user_code: str) -> di
             if resp.status >= 400:
                 raise RuntimeError(f"Device auth failed: HTTP {resp.status} {body}")
             return json.loads(body)
-    except ClientError as err:
+    except (ClientError, TimeoutError) as err:
         raise RuntimeError(f"Device auth failed: {err}") from err
+
+
+async def wait_for_device_login(
+    hass,
+    device_auth_id: str,
+    user_code: str,
+    interval: int,
+    *,
+    timeout: int = DEVICE_CODE_TIMEOUT_SECONDS,
+) -> dict:
+    """Poll Codex until the browser device login succeeds or expires."""
+    poll_interval = max(1, int(interval))
+    deadline = asyncio.get_running_loop().time() + timeout
+
+    while True:
+        polled = await poll_device_code_once(hass, device_auth_id, user_code)
+        if polled is not None:
+            return polled
+
+        remaining = deadline - asyncio.get_running_loop().time()
+        if remaining <= 0:
+            raise DeviceLoginExpired("Device auth timed out after 15 minutes")
+
+        await asyncio.sleep(min(poll_interval, remaining))
 
 
 async def exchange_code_for_tokens(hass, authorization_code: str, code_verifier: str) -> dict:
@@ -102,7 +133,7 @@ async def exchange_code_for_tokens(hass, authorization_code: str, code_verifier:
             if resp.status >= 400:
                 raise RuntimeError(f"Token exchange failed: HTTP {resp.status} {raw}")
             data = json.loads(raw)
-    except ClientError as err:
+    except (ClientError, TimeoutError) as err:
         raise RuntimeError(f"Token exchange failed: {err}") from err
 
     return {
