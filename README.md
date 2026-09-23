@@ -85,7 +85,7 @@ Banked reset data is refreshed every minute.
 
 The integration exposes an **Update interval** option for normal usage polling.
 
-- Default: 60 seconds
+- Default: 30 seconds
 - Minimum: 15 seconds
 - Maximum: 3600 seconds
 
