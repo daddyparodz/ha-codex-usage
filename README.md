@@ -17,12 +17,11 @@ Supported setup modes:
 
 1. **Sign in with ChatGPT (recommended)**
 - In the first step, keep `Authentication method = device_code`.
-- Home Assistant shows:
-  - a browser login URL
-  - an OTP code
-  - a required checkbox (`Browser login completed`)
-- Open the URL, sign in, then return to Home Assistant.
-- Tick the checkbox and press submit.
+- Home Assistant shows the browser login URL and one-time device code.
+- Open the URL and complete the ChatGPT login.
+- Home Assistant waits automatically and completes setup as soon as Codex confirms the login.
+- No checkbox or manual Continue action is required.
+- If the code expires or login fails, Home Assistant offers a retry that generates a new device code.
 - Tokens are saved in the config entry and refreshed automatically.
 
 2. **Paste access token manually**

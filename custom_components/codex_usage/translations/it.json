@@ -3,45 +3,44 @@
     "step": {
       "user": {
         "title": "Codex Usage",
-        "description": "Choose authentication method.",
+        "description": "Scegli il metodo di autenticazione.",
         "data": {
-          "auth_method": "Authentication method",
-          "scan_interval": "Update interval (seconds)"
+          "auth_method": "Metodo di autenticazione",
+          "scan_interval": "Intervallo di aggiornamento (secondi)"
         }
       },
-      "device_code": {
-        "title": "Sign in with ChatGPT",
-        "description": "1. Open: {verification_url}\n2. Enter OTP code: {user_code}\n3. Complete login in your browser\n4. Return here and confirm.",
-        "data": {
-          "otp_code": "OTP Code",
-          "confirm_done": "Browser login completed"
-        }
+      "device_code_retry": {
+        "title": "Accedi con ChatGPT",
+        "description": "Il precedente accesso tramite dispositivo non è stato completato. Invia per generare un nuovo codice dispositivo e riprovare."
       },
       "access_token": {
-        "title": "Use access token",
-        "description": "Paste an access token manually.",
+        "title": "Usa access token",
+        "description": "Incolla manualmente un access token.",
         "data": {
           "access_token": "Access token",
-          "account_id": "ChatGPT account ID (optional)"
+          "account_id": "ID account ChatGPT (opzionale)"
         }
       }
     },
+    "progress": {
+      "wait_for_device": "Apri il seguente URL e accedi con ChatGPT:\\n{verification_url}\\n\\nInserisci questo codice monouso:\\n\\n```{user_code}```\\n\\nHome Assistant attende la conferma dell'accesso da Codex. Il codice scade dopo 15 minuti."
+    },
     "error": {
-      "access_token_required": "Access token is required for this auth method.",
-      "device_code_init_failed": "Failed to start device-code login.",
-      "device_code_not_completed": "Complete the browser login first.",
-      "device_code_pending": "Authorization is still pending. Try again in a few seconds.",
-      "device_code_poll_failed": "Failed while checking authorization status.",
-      "token_exchange_failed": "Authorization completed, but token exchange failed."
+      "access_token_required": "Per questo metodo di autenticazione è necessario un access token.",
+      "device_code_init_failed": "Impossibile avviare l'accesso tramite codice dispositivo.",
+      "device_code_poll_failed": "Errore durante la verifica dello stato dell'autorizzazione.",
+      "device_code_expired": "Il codice dispositivo è scaduto prima del completamento dell'accesso. Genera un nuovo codice e riprova.",
+      "device_code_cancelled": "L'attività di accesso tramite dispositivo è stata annullata. Genera un nuovo codice e riprova.",
+      "token_exchange_failed": "Autorizzazione completata, ma lo scambio dei token non è riuscito."
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "Codex Usage options",
-        "description": "Adjust polling behavior.",
+        "title": "Opzioni Codex Usage",
+        "description": "Regola il comportamento del polling.",
         "data": {
-          "scan_interval": "Update interval (seconds)"
+          "scan_interval": "Intervallo di aggiornamento (secondi)"
         }
       }
     }
@@ -49,13 +48,8 @@
   "selector": {
     "auth_method": {
       "options": {
-        "device_code": "Sign in with ChatGPT (recommended)",
-        "access_token": "Paste access token manually"
-      }
-    },
-    "confirm_done": {
-      "options": {
-        "yes": "Yes, completed"
+        "device_code": "Accedi con ChatGPT (consigliato)",
+        "access_token": "Incolla manualmente un access token"
       }
     }
   }
