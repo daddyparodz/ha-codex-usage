@@ -11,7 +11,7 @@
       },
       "device_code_copy": {
         "title": "Copia il codice di accesso",
-        "description": "1. Copia il codice monouso qui sotto.\\n2. Seleziona Avanti.\\n3. Nella schermata successiva apri il link di accesso ChatGPT e incolla il codice.",
+        "description": "1. Copia il codice monouso qui sotto.\n2. Seleziona Avanti.\n3. Nella schermata successiva apri il link di accesso ChatGPT e incolla il codice.",
         "data": {
           "user_code": "Codice monouso"
         }
@@ -30,7 +30,7 @@
       }
     },
     "progress": {
-      "wait_for_device": "Ora apri questo URL e accedi con ChatGPT:\\n{verification_url}\\n\\nIncolla il codice copiato nella schermata precedente e completa l'accesso.\\n\\nHome Assistant continuerà automaticamente quando Codex confermerà l'accesso. Il codice scade dopo 15 minuti."
+      "wait_for_device": "Ora apri questo URL e accedi con ChatGPT:\n{verification_url}\n\nIncolla il codice copiato nella schermata precedente e completa l'accesso.\n\nHome Assistant continuerà automaticamente quando Codex confermerà l'accesso. Il codice scade dopo 15 minuti."
     },
     "error": {
       "access_token_required": "Per questo metodo di autenticazione è necessario un access token.",
