@@ -78,32 +78,13 @@ class CodexUsageConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         data_schema=_method_schema(self._base_config[CONF_SCAN_INTERVAL]),
                         errors={"base": "device_code_init_failed"},
                     )
-                return await self.async_step_device_code_copy()
+                return await self.async_step_device_code()
 
             return await self.async_step_access_token()
 
         return self.async_show_form(
             step_id="user",
             data_schema=_method_schema(self._base_config[CONF_SCAN_INTERVAL]),
-        )
-
-    async def async_step_device_code_copy(self, user_input=None):
-        """Show the device code in a copy-friendly field before opening login."""
-        if user_input is not None:
-            return await self.async_step_device_code()
-
-        schema = vol.Schema(
-            {
-                vol.Optional(
-                    "user_code",
-                    default=self._device_state.get("user_code_compact", ""),
-                ): selector.TextSelector(),
-            }
-        )
-        return self.async_show_form(
-            step_id="device_code_copy",
-            data_schema=schema,
-            last_step=False,
         )
 
     async def _async_complete_device_login(self) -> dict:
@@ -155,6 +136,7 @@ class CodexUsageConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             progress_action="wait_for_device",
             description_placeholders={
                 "verification_url": self._device_state.get("verification_url", ""),
+                "user_code": self._device_state.get("user_code_compact", ""),
             },
             progress_task=self._device_login_task,
         )
@@ -188,7 +170,7 @@ class CodexUsageConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             except RuntimeError:
                 self._device_login_error = "device_code_init_failed"
             else:
-                return await self.async_step_device_code_copy()
+                return await self.async_step_device_code()
 
         return self.async_show_form(
             step_id="device_code_retry",
