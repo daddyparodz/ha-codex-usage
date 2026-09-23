@@ -47,45 +47,6 @@ def _flow() -> CodexUsageConfigFlow:
     return flow
 
 
-def test_device_code_copy_step_is_copyable() -> None:
-    """Show the device code in an editable text field before login progress."""
-    flow = _flow()
-
-    result = asyncio.run(flow.async_step_device_code_copy())
-
-    assert result["type"] is FlowResultType.FORM
-    assert result["step_id"] == "device_code_copy"
-    assert result["last_step"] is False
-    assert result["data_schema"]({})["user_code"] == "ABCDEFGH"
-
-    selector_value = next(iter(result["data_schema"].schema.values()))
-    assert isinstance(selector_value, config_flow.selector.TextSelector)
-    assert selector_value.config.get("read_only") is not True
-
-
-@pytest.mark.asyncio
-async def test_device_code_copy_step_starts_progress(monkeypatch) -> None:
-    """Start automatic polling after the user has copied the code."""
-    gate = asyncio.Event()
-
-    async def wait_for_login(*args, **kwargs):
-        await gate.wait()
-        return {
-            "authorization_code": "authorization-code",
-            "code_verifier": "code-verifier",
-        }
-
-    flow = _flow()
-    monkeypatch.setattr(config_flow, "wait_for_device_login", wait_for_login)
-
-    result = await flow.async_step_device_code_copy({"user_code": "ABCDEFGH"})
-
-    assert result["type"] is FlowResultType.SHOW_PROGRESS
-    assert flow._device_login_task is not None
-    flow.async_remove()
-    await asyncio.sleep(0)
-
-
 @pytest.mark.asyncio
 async def test_device_login_pending(monkeypatch) -> None:
     """Keep the progress step open while Codex authorization is pending."""
@@ -107,6 +68,7 @@ async def test_device_login_pending(monkeypatch) -> None:
     assert result["progress_action"] == "wait_for_device"
     assert result["description_placeholders"] == {
         "verification_url": "https://example.test/codex/device",
+        "user_code": "ABCDEFGH",
     }
     assert flow._device_login_task is not None
     flow.async_remove()
@@ -292,4 +254,4 @@ def test_device_login_progress_copy_uses_real_newlines() -> None:
         assert "\n" in message
         assert "\\n" not in message
         assert "{verification_url}" in message
-        assert "{user_code}" not in message
+        assert "{user_code}" in message
