@@ -9,6 +9,13 @@
           "scan_interval": "Update interval (seconds)"
         }
       },
+      "device_code_copy": {
+        "title": "Copy the login code",
+        "description": "1. Copy the one-time code below.\\n2. Select Next.\\n3. On the next screen, open the ChatGPT login link and paste the code.",
+        "data": {
+          "user_code": "One-time code"
+        }
+      },
       "device_code_retry": {
         "title": "Sign in with ChatGPT",
         "description": "The previous device login could not be completed. Submit to generate a new device code and try again."
@@ -23,7 +30,7 @@
       }
     },
     "progress": {
-      "wait_for_device": "Open the following URL and sign in with ChatGPT:\n{verification_url}\n\nEnter this one-time code:\n\n```{user_code}```\n\nHome Assistant will continue automatically after Codex confirms the login. The code expires after 15 minutes."
+      "wait_for_device": "Now open this URL and sign in with ChatGPT:\\n{verification_url}\\n\\nPaste the code you copied in the previous step and complete the login.\\n\\nHome Assistant will continue automatically after Codex confirms the login. The code expires after 15 minutes."
     },
     "error": {
       "access_token_required": "Access token is required for this auth method.",
