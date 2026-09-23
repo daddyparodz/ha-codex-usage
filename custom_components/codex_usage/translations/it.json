@@ -29,7 +29,7 @@
     "error": {
       "access_token_required": "Access token is required for this auth method.",
       "device_code_init_failed": "Failed to start device-code login.",
-      "device_code_not_completed": "Seleziona Login dal browser completato prima di continuare.",
+      "device_code_not_completed": "Select Browser login completed before continuing.",
       "device_code_pending": "Authorization is still pending. Try again in a few seconds.",
       "device_code_poll_failed": "Failed while checking authorization status.",
       "token_exchange_failed": "Authorization completed, but token exchange failed."
