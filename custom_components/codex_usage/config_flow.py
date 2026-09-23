@@ -76,7 +76,7 @@ class CodexUsageConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             if not user_input.get("confirm_done"):
-                errors["base"] = "device_code_not_completed"
+                errors["confirm_done"] = "device_code_not_completed"
             else:
                 try:
                     polled = await poll_device_code_once(
