@@ -23,7 +23,7 @@
       }
     },
     "progress": {
-      "wait_for_device": "Open the following URL and sign in with ChatGPT:\\n{verification_url}\\n\\nEnter this one-time code:\\n\\n```{user_code}```\\n\\nHome Assistant is waiting for Codex to confirm the login. The code expires after 15 minutes."
+      "wait_for_device": "Open the following URL and sign in with ChatGPT:\n{verification_url}\n\nEnter this one-time code:\n\n```{user_code}```\n\nHome Assistant will continue automatically after Codex confirms the login. The code expires after 15 minutes."
     },
     "error": {
       "access_token_required": "Access token is required for this auth method.",

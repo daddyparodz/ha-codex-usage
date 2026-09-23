@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import asyncio
+import json
+from pathlib import Path
 from unittest.mock import AsyncMock, Mock
 
 import pytest
@@ -238,3 +240,18 @@ async def test_device_login_step_reuses_same_task(monkeypatch) -> None:
 
     flow.async_remove()
     await asyncio.sleep(0)
+
+
+def test_device_login_progress_copy_uses_real_newlines() -> None:
+    """Keep progress copy readable in Home Assistant markdown."""
+    for path in (
+        Path("custom_components/codex_usage/strings.json"),
+        Path("custom_components/codex_usage/translations/it.json"),
+    ):
+        data = json.loads(path.read_text())
+        message = data["config"]["progress"]["wait_for_device"]
+
+        assert "\n" in message
+        assert "\\n" not in message
+        assert "{verification_url}" in message
+        assert "{user_code}" in message

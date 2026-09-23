@@ -1,2 +1,5 @@
 [default.extend-words]
 hass = "hass"
+
+[files]
+extend-exclude = ["custom_components/codex_usage/translations/it.json"]
