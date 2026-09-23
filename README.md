@@ -1,93 +1,100 @@
 # Codex Usage for Home Assistant
 
-A custom Home Assistant integration (via HACS) that exposes your Codex usage as sensors.
+Codex Usage is a custom Home Assistant integration distributed through HACS. It exposes Codex account usage, quota windows, reset times, credits, plan information, limit status, and banked resets as native Home Assistant entities.
 
 ## Features
 
-- 5-hour usage and remaining percentage
-- Weekly usage and remaining percentage
-- Reset time sensors for both windows
+- 5-hour usage and remaining quota
+- Weekly usage and remaining quota
+- Reset time sensors for both usage windows
 - Plan, credits, and limit status sensors
-- Banked resets, with grant/expiry details
-- Browser-based ChatGPT login (device code)
+- Banked reset tracking with grant and expiration details
+- Calendar events for banked reset expirations
+- ChatGPT device authorization
+- Manual access-token configuration
+- Configurable polling interval
 
-## Authentication
+## Installation
 
-Supported setup modes:
+### HACS
 
-1. **Sign in with ChatGPT (recommended)**
-- In the first step, keep `Authentication method = device_code`.
-- Home Assistant shows the browser login URL and one-time device code.
-- Open the URL and complete the ChatGPT login.
-- Home Assistant waits automatically and completes setup as soon as Codex confirms the login.
-- No checkbox or manual Continue action is required.
-- If the code expires or login fails, Home Assistant offers a retry that generates a new device code.
-- Tokens are saved in the config entry and refreshed automatically.
-
-2. **Paste access token manually**
-- In the first step, select `Authentication method = access_token`.
-- Paste token (optional account ID if needed) and submit.
-
-## Installation (HACS)
-
-1. Open HACS in Home Assistant.
-2. Go to `Integrations`.
-3. Open menu (`⋮`) -> `Custom repositories`.
-4. Add this repository URL.
-5. Select category `Integration`.
+1. Open **HACS** in Home Assistant.
+2. Go to **Integrations**.
+3. Open the menu in the top-right corner and select **Custom repositories**.
+4. Add:
+   `https://github.com/daddyparodz/ha-codex-usage`
+5. Select **Integration** as the category.
 6. Install **Codex Usage**.
 7. Restart Home Assistant.
 
-## Setup
+## Configuration
 
-1. Go to `Settings` -> `Devices & Services`.
-2. Click `Add Integration`.
+After restarting Home Assistant:
+
+1. Open **Settings** > **Devices & services**.
+2. Select **Add integration**.
 3. Search for **Codex Usage**.
-4. Complete authentication.
+4. Choose an authentication method.
 
-If setup completed correctly, a `Codex Usage` config entry is created and sensors appear.
+### Sign in with ChatGPT
+
+Select `device_code` to use the browser-based sign-in flow.
+
+Home Assistant displays a ChatGPT sign-in URL and a one-time code, then monitors the authorization status. Setup completes automatically when the login is approved.
+
+The resulting access token, refresh token, ID token, and account ID are stored in the config entry and used for subsequent updates.
+
+### Access token
+
+Select `access_token` to configure the integration with an existing access token.
+
+The ChatGPT account ID can also be provided when required.
+
+## Entities
+
+| Entity | Name | Description |
+| --- | --- | --- |
+| `sensor.codex_5h_used` | 5h Used | Percentage used in the 5-hour window |
+| `sensor.codex_5h_remaining` | 5h Remaining | Percentage remaining in the 5-hour window |
+| `sensor.codex_5h_reset` | 5h Reset | Reset time for the 5-hour window |
+| `sensor.codex_weekly_used` | Weekly Used | Percentage used in the weekly window |
+| `sensor.codex_weekly_remaining` | Weekly Remaining | Percentage remaining in the weekly window |
+| `sensor.codex_weekly_reset` | Weekly Reset | Reset time for the weekly window |
+| `sensor.codex_credits` | Credits | Current credits balance |
+| `sensor.codex_plan` | Plan | Current ChatGPT plan |
+| `sensor.codex_limit_status` | Limit Status | Current rate-limit status |
+| `sensor.codex_resets_available` | Banked Resets | Number of usable banked resets |
+| `calendar.codex_reset_credits` | Banked Resets | Expiration events for usable banked resets |
+
+## Banked resets
+
+The **Banked Resets** sensor exposes additional information through state attributes, including:
+
+- `banked_resets`
+- `next_expiration`
+- `banked_resets_last_update`
+- `error`
+
+Each banked reset includes its grant time, expiration time, current status, and remaining lifetime.
+
+The **Banked Resets** calendar contains one event for each usable reset. Events begin at the reset expiration time and last one minute, providing a precise marker for when each reset expires.
+
+Banked reset data is refreshed every minute.
 
 ## Options
 
-After setup, open integration options to change:
-- `Update interval (seconds)`
+The integration exposes an **Update interval** option for normal usage polling.
 
-## Entities created
-
-- `sensor.codex_5h_used`
-- `sensor.codex_5h_remaining`
-- `sensor.codex_5h_reset`
-- `sensor.codex_weekly_used`
-- `sensor.codex_weekly_remaining`
-- `sensor.codex_weekly_reset`
-- `sensor.codex_credits`
-- `sensor.codex_plan`
-- `sensor.codex_limit_status`
-- `sensor.codex_resets_available`
-
-Display names omit the redundant `Codex` prefix because the entities already belong to
-the **Codex Usage** device. Entity IDs and unique IDs remain unchanged.
-
-`sensor.codex_resets_available` is named **Banked Resets** and exposes the
-number of usable banked resets. Its `banked_resets` attribute lists each reset's
-grant time, expiry time, current status, and remaining lifetime. Banked resets
-are refreshed every minute while their remaining lifetime is recalculated
-on every normal integration update.
-
-All usable banked resets also appear as events in
-`calendar.codex_reset_credits`, named **Banked Resets**. Each event starts
-at the exact expiration time and lasts one minute, so the calendar marks only
-when the reset expires instead of spanning its entire lifetime. Grant time,
-expiration time, status, and remaining lifetime stay available in the event
-description. The integration keeps a single calendar entity: events are
-refreshed every minute and disappear automatically when resets expire or are
-redeemed.
+- Default: 60 seconds
+- Minimum: 15 seconds
+- Maximum: 3600 seconds
 
 ## Notes
 
-- This integration relies on internal endpoints and may require updates if upstream APIs change.
-- Keep tokens private.
+- The integration uses ChatGPT and Codex endpoints that may change upstream.
+- Authentication tokens are stored in the Home Assistant config entry and should be treated as sensitive credentials.
+- Entity IDs and unique IDs are kept stable across updates.
 
 ## Disclaimer
 
-This project is community-maintained and is not an official OpenAI or Home Assistant integration.
+Codex Usage is a community-maintained project and is not affiliated with or endorsed by OpenAI or Home Assistant.
