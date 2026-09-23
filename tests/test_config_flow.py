@@ -242,13 +242,14 @@ async def test_device_login_step_reuses_same_task(monkeypatch) -> None:
     await asyncio.sleep(0)
 
 
-def test_device_login_progress_copy_uses_real_newlines() -> None:
-    """Keep progress copy readable in Home Assistant markdown."""
-    for path in (
-        Path("custom_components/codex_usage/strings.json"),
-        Path("custom_components/codex_usage/translations/it.json"),
-    ):
-        data = json.loads(path.read_text())
+def test_runtime_translations_use_real_newlines() -> None:
+    """Keep runtime translation files valid for Home Assistant custom integrations."""
+    translation_dir = Path("custom_components/codex_usage/translations")
+
+    assert not Path("custom_components/codex_usage/strings.json").exists()
+
+    for language in ("en", "it"):
+        data = json.loads((translation_dir / f"{language}.json").read_text())
         message = data["config"]["progress"]["wait_for_device"]
 
         assert "\n" in message
