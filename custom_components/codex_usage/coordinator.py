@@ -304,6 +304,8 @@ class CodexUsageCoordinator(DataUpdateCoordinator[dict]):
 
         p_used = window_used_percent(primary)
         s_used = window_used_percent(secondary)
+        primary_reset_epoch = window_reset_epoch(primary)
+        weekly_reset_epoch = window_reset_epoch(secondary)
 
         normalized = {
             "plan": raw.get("plan_type") or raw.get("planType"),
@@ -312,15 +314,16 @@ class CodexUsageCoordinator(DataUpdateCoordinator[dict]):
                 max(0.0, 100.0 - p_used) if p_used is not None else None
             ),
             "primary_reset_time": _format_reset_time(
-                window_reset_epoch(primary), include_date=False
+                primary_reset_epoch, include_date=False
             ),
             "secondary_used_percent": s_used,
             "secondary_remaining_percent": (
                 max(0.0, 100.0 - s_used) if s_used is not None else None
             ),
             "secondary_reset_time": _format_reset_time(
-                window_reset_epoch(secondary), include_date=True
+                weekly_reset_epoch, include_date=True
             ),
+            "weekly_reset_epoch": weekly_reset_epoch,
             "credits_balance": (raw.get("credits") or {}).get("balance"),
             "rate_limit_reached_type": (
                 (raw.get("rate_limit_reached_type") or {}).get("kind")
