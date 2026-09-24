@@ -9,7 +9,7 @@ Codex Usage is a custom Home Assistant integration distributed through HACS. It 
 - Reset time sensors for both usage windows
 - Plan, credits, and limit status sensors
 - Banked reset tracking with grant and expiration details
-- Calendar events for banked reset expirations
+- Calendar events for banked reset expirations and the next weekly reset
 - ChatGPT device authorization
 - Manual access-token configuration
 - Configurable polling interval
@@ -65,6 +65,7 @@ The ChatGPT account ID can also be provided when required.
 | `sensor.codex_limit_status` | Limit Status | Current rate-limit status |
 | `sensor.codex_resets_available` | Banked Resets | Number of usable banked resets |
 | `calendar.codex_reset_credits` | Banked Resets | Expiration events for usable banked resets |
+| `calendar.codex_weekly_reset` | Weekly Reset | Next weekly usage-window reset |
 
 ## Banked resets
 
@@ -80,6 +81,12 @@ Each banked reset includes its grant time, expiration time, current status, and 
 The **Banked Resets** calendar contains one event for each usable reset. Events begin at the reset expiration time and last one minute, providing a precise marker for when each reset expires.
 
 Banked reset data is refreshed every minute.
+
+## Weekly reset calendar
+
+The **Weekly Reset** calendar exposes the next weekly usage-window reset reported by Codex. The event starts at the exact reset timestamp and lasts one minute.
+
+The event updates with normal usage polling when Codex reports the next weekly reset.
 
 ## Options
 
