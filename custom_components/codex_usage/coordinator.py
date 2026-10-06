@@ -11,6 +11,7 @@ from pathlib import Path
 from aiohttp import ClientError
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers import aiohttp_client
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
@@ -41,6 +42,26 @@ from .usage_windows import (
 )
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def _refresh_requires_reauth(status: int, response_body: str) -> bool:
+    """Return whether a token refresh failure requires user reauthentication."""
+    if status in (401, 403):
+        return True
+    if status != 400:
+        return False
+
+    body = response_body.lower()
+    return any(
+        marker in body
+        for marker in (
+            "refresh_token_invalidated",
+            "invalid_grant",
+            "refresh token has been invalidated",
+            "refresh token is invalid",
+            "refresh token expired",
+        )
+    )
 
 
 def _format_reset_time(epoch_seconds: int | None, include_date: bool) -> str | None:
@@ -123,6 +144,10 @@ class CodexUsageCoordinator(DataUpdateCoordinator[dict]):
             async with session.post(refresh_url, json=payload, timeout=30) as resp:
                 raw = await resp.text()
                 if resp.status >= 400:
+                    if _refresh_requires_reauth(resp.status, raw):
+                        raise ConfigEntryAuthFailed(
+                            "Codex authentication expired or was revoked; sign in again"
+                        )
                     raise UpdateFailed(f"Token refresh failed: HTTP {resp.status} {raw}")
                 return json.loads(raw)
         except ClientError as err:
@@ -287,12 +312,20 @@ class CodexUsageCoordinator(DataUpdateCoordinator[dict]):
                     async with session.get(backend_url, headers=headers, timeout=30) as retry:
                         if retry.status >= 400:
                             body = await retry.text()
+                            if retry.status == 401:
+                                raise ConfigEntryAuthFailed(
+                                    "Codex authentication is no longer valid; sign in again"
+                                )
                             raise UpdateFailed(
                                 f"Codex usage request failed: HTTP {retry.status} {body}"
                             )
                         raw = await retry.json()
                 elif resp.status >= 400:
                     body = await resp.text()
+                    if resp.status == 401:
+                        raise ConfigEntryAuthFailed(
+                            "Codex authentication is no longer valid; sign in again"
+                        )
                     raise UpdateFailed(f"Codex usage request failed: HTTP {resp.status} {body}")
                 else:
                     raw = await resp.json()
