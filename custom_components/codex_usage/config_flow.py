@@ -59,6 +59,43 @@ class CodexUsageConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     def async_get_options_flow(config_entry):
         return CodexUsageOptionsFlow(config_entry)
 
+    async def async_step_reauth(self, entry_data):
+        """Start reauthentication for an existing config entry."""
+        entry = self._get_reauth_entry()
+        if entry.unique_id:
+            await self.async_set_unique_id(entry.unique_id)
+            self._abort_if_unique_id_mismatch()
+
+        self._base_config = dict(entry_data)
+        self._auth_method = entry_data.get(CONF_AUTH_METHOD, AUTH_METHOD_DEVICE)
+        return await self.async_step_reauth_confirm()
+
+    async def async_step_reauth_confirm(self, user_input=None):
+        """Confirm and start the appropriate reauthentication method."""
+        if user_input is None:
+            return self.async_show_form(step_id="reauth_confirm")
+
+        if self._auth_method == AUTH_METHOD_DEVICE:
+            self._reset_device_login_state()
+            try:
+                self._device_state = await request_device_code(self.hass)
+            except RuntimeError:
+                return self.async_show_form(
+                    step_id="reauth_confirm",
+                    errors={"base": "device_code_init_failed"},
+                )
+            return await self.async_step_device_code()
+
+        return await self.async_step_access_token()
+
+    def _finish_authentication(self):
+        """Create a new entry or update the entry being reauthenticated."""
+        if self.source == config_entries.SOURCE_REAUTH:
+            return self.async_update_reload_and_abort(
+                self._get_reauth_entry(), data_updates=self._base_config
+            )
+        return self._finish_authentication()
+
     async def async_step_user(self, user_input=None):
         """Choose auth method first."""
         await self.async_set_unique_id("codex_usage_singleton")
@@ -206,7 +243,7 @@ class CodexUsageConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         CONF_ID_TOKEN: "",
                     }
                 )
-                return self.async_create_entry(title="Codex Usage", data=self._base_config)
+                return self._finish_authentication()
 
         schema = vol.Schema(
             {
