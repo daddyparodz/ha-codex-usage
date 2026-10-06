@@ -20,6 +20,10 @@
           "access_token": "Access token",
           "account_id": "ChatGPT account ID (optional)"
         }
+      },
+      "reauth_confirm": {
+        "title": "Reauthentication required",
+        "description": "The Codex Usage credentials are no longer valid. Continue to sign in to ChatGPT again and restore the integration."
       }
     },
     "progress": {
