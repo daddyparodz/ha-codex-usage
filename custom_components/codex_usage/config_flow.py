@@ -94,7 +94,7 @@ class CodexUsageConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             return self.async_update_reload_and_abort(
                 self._get_reauth_entry(), data_updates=self._base_config
             )
-        return self._finish_authentication()
+        return self.async_create_entry(title="Codex Usage", data=self._base_config)
 
     async def async_step_user(self, user_input=None):
         """Choose auth method first."""
@@ -196,7 +196,7 @@ class CodexUsageConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         )
         self._device_login_tokens = None
         self._device_state = {}
-        return self.async_create_entry(title="Codex Usage", data=self._base_config)
+        return self._finish_authentication()
 
     async def async_step_device_code_retry(self, user_input=None):
         """Allow generating a fresh device code after a failed login."""
