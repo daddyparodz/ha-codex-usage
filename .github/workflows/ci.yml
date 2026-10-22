@@ -2,7 +2,12 @@
 name: CI
 
 on:
-  pull_request:
+  push:
+    branches: ["**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
@@ -10,9 +15,20 @@ env:
 jobs:
   qa_actions:
     name: qa_actions
-    runs-on: ubuntu-latest
+    if: github.repository_owner_id == '45983094' && github.actor_id == '45983094' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && startsWith(github.ref, 'refs/heads/')
+    runs-on: [self-hosted, Linux, X64]
+    container: ubuntu:24.04
+    defaults:
+      run:
+        shell: bash
     steps:
+      - name: Bootstrap container
+        run: apt-get update && apt-get install -y --no-install-recommends ca-certificates curl git wget
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
       - name: Changed Files
         uses: tj-actions/changed-files@v47.0.6
       - name: typos-action
@@ -20,9 +36,20 @@ jobs:
 
   lint:
     name: lint
-    runs-on: ubuntu-latest
+    if: github.repository_owner_id == '45983094' && github.actor_id == '45983094' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && startsWith(github.ref, 'refs/heads/')
+    runs-on: [self-hosted, Linux, X64]
+    container: ubuntu:24.04
+    defaults:
+      run:
+        shell: bash
     steps:
+      - name: Bootstrap container
+        run: apt-get update && apt-get install -y --no-install-recommends ca-certificates curl git
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -37,9 +64,20 @@ jobs:
 
   tests:
     name: tests
-    runs-on: ubuntu-latest
+    if: github.repository_owner_id == '45983094' && github.actor_id == '45983094' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && startsWith(github.ref, 'refs/heads/')
+    runs-on: [self-hosted, Linux, X64]
+    container: ubuntu:24.04
+    defaults:
+      run:
+        shell: bash
     steps:
+      - name: Bootstrap container
+        run: apt-get update && apt-get install -y --no-install-recommends ca-certificates curl git
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: "3.14"
@@ -48,13 +86,24 @@ jobs:
           python -m pip install --upgrade pip
           pip install homeassistant==2026.9.3 pytest pytest-asyncio
       - name: Pytest
-        run: python -m pytest -q tests/test_config_flow.py tests/test_auth_device.py tests/test_coordinator.py tests/test_weekly_reset_calendar.py
+        run: python -m pytest -q tests/test_config_flow.py tests/test_auth_device.py tests/test_coordinator.py tests/test_weekly_reset_calendar.py tests/test_ci_prerequisites.py
 
   validate:
     name: validate
-    runs-on: ubuntu-latest
+    if: github.repository_owner_id == '45983094' && github.actor_id == '45983094' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && startsWith(github.ref, 'refs/heads/')
+    runs-on: [self-hosted, Linux, X64]
+    container: ubuntu:24.04
+    defaults:
+      run:
+        shell: bash
     steps:
+      - name: Bootstrap container
+        run: apt-get update && apt-get install -y --no-install-recommends ca-certificates curl git
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
